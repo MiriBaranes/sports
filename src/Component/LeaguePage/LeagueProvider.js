@@ -12,7 +12,7 @@ import Header from "../DynamicComponenet/Header";
 import RouteComponent from "./RouteComponent";
 import NavLinkMain from "./NavLinkMain";
 
-const navActive = (id) => window.location.pathname.charAt(window.location.pathname.length-1) == id? {
+const navActive = (id) => window.location.pathname.charAt(window.location.pathname.length - 1) == id ? {
     backgroundColor: "black"
 } : undefined;
 
@@ -21,7 +21,8 @@ class LeagueProvider extends React.Component {
         league: {},
         history: [],
         leagues: [],
-        loading: true
+        loading: true,
+        loadingHistory: false
     }
 
     async componentDidMount() {
@@ -40,20 +41,17 @@ class LeagueProvider extends React.Component {
     }
 
     async componentDidUpdate(prevProps, prevState, snapshot) {
-        const id = getIdFromPathname(window.location.pathname);
-        console.log(id)
-        if (prevState.league.id!=this.state.league.id) {
+        if (prevState.league.id != this.state.league.id) {
             await this.setLocation();
         }
     }
 
     changeData = async (obj) => {
         await getData(HISTORY_PATH + obj.id).then(data => {
-            console.log(data)
             this.setState({
                 history: data,
                 league: obj,
-                loading: false
+                loadingHistory: false
             })
         })
     }
@@ -62,15 +60,16 @@ class LeagueProvider extends React.Component {
     setLocation = async () => {
         const id = getIdFromPathname(window.location.pathname);
         const object = this.state.leagues.find(x => x.id == id);
-        console.log(object)
         if (object == undefined || object == "") {
             this.setState({
                 history: [],
                 league: {},
                 loading: false
             })
-        }
-        else {
+        } else {
+            this.setState({
+                loadingHistory: true
+            })
             await this.changeData(object);
         }
 

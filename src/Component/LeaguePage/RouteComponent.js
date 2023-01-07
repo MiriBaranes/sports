@@ -16,9 +16,9 @@ function RouteComponent(props) {
             <Route path={HISTORY_PATH + ":id"}
                    element={<HistoryForAllLeague history={props.history} league={props.league}/>}/>
             <Route path={BEST_PLAYERS_PATH + ":id"}
-                   element={<TheBestsPlayers history={props.history} league={props.league}/>}/>
+                   element={<TheBestsPlayers loading={props.state.loadingHistory} history={props.history} league={props.league}/>}/>
             <Route path={STATISTIC_PATH + ":id"}
-                   element={<StatisticLeague history={props.history} league={props.league}/>}/>
+                   element={<StatisticLeague loading={props.state.loadingHistory} history={props.history} league={props.league}/>}/>
         </Route>
     </Routes>;
 }

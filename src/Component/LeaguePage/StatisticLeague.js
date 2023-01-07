@@ -1,4 +1,3 @@
-
 import React from "react";
 import LoadingComponent from "../DynamicComponenet/LoadingComponent";
 import {getAllDataAboutLeagues} from "../../data/componentData";
@@ -11,71 +10,39 @@ const GOAL_FASTEST_STATISTIC = ["The fastest goal minute", "The latest goal minu
 const GOAL_BY_HALF = ["First Half Goals : ", "Second Half Goals : "];
 const GOAL_BY_ROUND = ["The round with the most goals", "The round with the fewest goals"];
 
-class StatisticLeague extends React.Component {
-    state = {
-        loading: true,
-        id: 0,
-        halfStatistic: {},
-        goalsTimeStatistic: {},
-        goalsRoundsStatistic: {}
-    }
+function StatisticLeague(props) {
 
-    async componentDidMount() {
-        this.setState({
-            loading: true
-        })
-        await this.init();
-    }
+    const isEarlyGoal = (goal) => goal < HALF_GAME;
 
-    isEarlyGoal = (goal) => goal < HALF_GAME;
-
-    async componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.league.id !== prevProps.league.id) {
-            await this.init()
-        }
-    }
-
-    init = async () => {
-        const history = await this.props.history;
-        const goals = this.getHistoryOfScorer(history);
-        const round = this.getNumbersOfGoalsByRound(history);
-        this.setState({
-            goalsTimeStatistic: goals[0],
-            halfStatistic: goals[1],
-            goalsRoundsStatistic: round,
-            loading: false
-        })
-    }
-
-    getHistoryOfScorer(history) {
+    function getHistoryOfScorer(history) {
         const goals = history.map(x => x.goals);
         let minute = [];
         goals.map(goals => goals.map(x => x.minute && minute.push(x.minute)));
         const min = Math.min(...minute);
         const max = Math.max(...minute);
-        const firstHalf = minute.filter(this.isEarlyGoal).length;
+        const firstHalf = minute.filter(isEarlyGoal).length;
         const secHalf = minute.length - firstHalf;
         return [{earlyGoal: min, latestGoal: max}, {firstHalf: firstHalf, secHalf: secHalf}];
     }
 
-    sum = (prev, cur) => {
+    const sum = (prev, cur) => {
         return prev + cur;
     }
 
-    getGoalsByRounds(round, list) {
+    function getGoalsByRounds(round, list) {
         const roundList = list.filter(x => x.round === round);
         const goalsList = roundList.map(play => play.homeGoals + play.awayGoals);
-        return goalsList.reduce(this.sum, 0);
+        return goalsList.reduce(sum, 0);
     }
 
-    getNumbersOfGoalsByRound(list) {
+    function getNumbersOfGoalsByRound(list) {
         const allHistory = getAllDataAboutLeagues(list);
         const history = allHistory.historyLeague;
         const minMax = findMinMax("round", history);
         let min = {round: undefined, count: Math.pow(100, 10)};
         let max = {round: undefined, count: 0};
         for (let i = minMax.min; i <= minMax.max; i++) {
-            const goals = this.getGoalsByRounds(i, history);
+            const goals = getGoalsByRounds(i, history);
             if (goals < min.count) {
                 min.round = i;
                 min.count = goals;
@@ -91,23 +58,26 @@ class StatisticLeague extends React.Component {
         }
     }
 
-    render() {
-        return (
-            <div>
-                {
-                    this.state.loading ?
-                        <LoadingComponent/> :
-                        <div>
-                            <Header header={" 📊 Statistic Of " +this.props.league.name+ " League"}/>
-                            <Statistic headers={GOAL_BY_HALF}
-                                       object={this.state.halfStatistic}/>
-                            <Statistic headers={GOAL_BY_ROUND} object={this.state.goalsRoundsStatistic}/>
-                            <Statistic headers={GOAL_FASTEST_STATISTIC} object={this.state.goalsTimeStatistic}/>
-                        </div>
-                }
-            </div>
-        )
-    }
-}
+    const history = props.history;
+    const goals = getHistoryOfScorer(history);
+    const round = getNumbersOfGoalsByRound(history);
+    const goalsTimeStatistic = goals[0];
+    const halfStatistic = goals[1];
+    return (
+        <div>
+            {
+                props.loading ?
+                    <LoadingComponent/> :
+                    <div>
+                        <Header header={" 📊 Statistic Of " + props.league.name + " League"}/>
+                        <Statistic headers={GOAL_BY_HALF}
+                                   object={halfStatistic}/>
+                        <Statistic headers={GOAL_BY_ROUND} object={round}/>
+                        <Statistic headers={GOAL_FASTEST_STATISTIC} object={goalsTimeStatistic}/>
+                    </div>
+            }
+        </div>
+    )
 
+}
 export default StatisticLeague;

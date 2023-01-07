@@ -3,39 +3,13 @@ import {getCountByKey, getTopN, mapByKeyPaths} from "../../data/apiFunc";
 import React from "react";
 import LoadingComponent from "../DynamicComponenet/LoadingComponent";
 import PrintTableData from "../DynamicComponenet/PrintTableData";
+const BEST_PLAYERS_KEYS=['number', 'firstName', 'lastName', 'count'];
+const BES_PLAYERS_HEADERS= ["Place", "First Name", "Last Name", "Number Of Goals"];
 
 
-class TheBestsPlayers extends React.Component {
-    state = {
-        bestPlayers: [],
-        id: 0,
-        loading: true
-    }
-
-    async componentDidMount() {
-        this.setState({
-            loading: true
-        })
-        await this.init();
-    }
-
-    async componentDidUpdate(prevProps, prevState, snapshot) {
-        if (prevProps.league.id !== this.props.league.id) {
-            await this.init()
-        }
-    }
-
-    init = async () => {
-        const history = await this.props.history;
-        const theBest = this.theBestPlayerInLeague(history);
-        this.setState({
-            bestPlayers: theBest,
-            loading: false
-        })
-    }
-
-    theBestPlayerInLeague(history) {
-        const all_goals = mapByKeyPaths(history, [["goals"]]).map(x => x.goals).filter(Boolean);
+function  TheBestsPlayers(props){
+    const theBest= ()=> {
+        const all_goals = mapByKeyPaths(props.history, [["goals"]]).map(x => x.goals).filter(Boolean);
         let all_scorers = [];
         for (const goals of all_goals) {
             const scorers = goals.map(x => x.scorer).map(x => {
@@ -58,22 +32,20 @@ class TheBestsPlayers extends React.Component {
         });
         return theBest;
     }
-
-    render() {
-        return (
-            <div>
-                {this.state.loading ? <LoadingComponent/> :
-                    <div>
-                        <Header header={"The Best Player For " + this.props.league.name+" League "}/>
-                        <PrintTableData data={this.state.bestPlayers}
-                                        headers={["Place", "First Name", "Last Name", "Number Of Goals"]}
-                                        keys={Object.keys(this.state.bestPlayers[0])}
-                        type={false}/>
-                    </div>
-                }
-            </div>
-        )
-    }
+    return (
+        <div>
+            {props.loading ? <LoadingComponent/> :
+                <div>
+                    <Header header={"The Best Player For " + props.league.name+" League "}/>
+                    <PrintTableData data={theBest()}
+                                    headers={BES_PLAYERS_HEADERS}
+                                    keys={BEST_PLAYERS_KEYS}
+                                    type={false}/>
+                </div>
+            }
+        </div>
+    )
 }
+
 
 export default TheBestsPlayers;

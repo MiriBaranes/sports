@@ -39,7 +39,6 @@ class LeagueComponent extends React.Component {
         this.setState({
             loadingData: true
         })
-        console.log(this.state.listToRender)
         await this.init();
     }
 
@@ -69,7 +68,6 @@ class LeagueComponent extends React.Component {
         let groupPlayers = await getData(TEAMS_PAGE_API_PATH + this.props.league.id + "/" + dataItem.id);
         groupPlayers = mapByKeyPaths(groupPlayers, KEYS_PLAYERS_MAP);
         const history = this.state.historyOfLeague.filter(x => x.homeId == dataItem.id || x.awayId == dataItem.id);
-        console.log(history)
         this.setState({
             groupHistory: history,
             groupPlayers: groupPlayers,

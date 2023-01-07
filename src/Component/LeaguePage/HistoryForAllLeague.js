@@ -45,7 +45,6 @@ class HistoryForAllLeague extends React.Component {
             list: objectData.data,
             loadingData: false
         })
-        console.log(objectData.data)
     }
 
     dataFunction(list) {
