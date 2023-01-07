@@ -6,6 +6,7 @@ import HistoryForAllLeague from "./HistoryForAllLeague";
 import TheBestsPlayers from "./TheBestsPlayers";
 import StatisticLeague from "./StatisticLeague";
 import React from "react";
+import NotFound from "./NotFound";
 
 function RouteComponent(props) {
     return <Routes>

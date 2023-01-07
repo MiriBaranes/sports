@@ -16,7 +16,7 @@ const navActive = (id) => window.location.pathname.charAt(window.location.pathna
     backgroundColor: "black"
 } : undefined;
 
-class LeagueProvider extends React.Component {
+class LeagueMainPage extends React.Component {
     state = {
         league: {},
         history: [],
@@ -101,4 +101,4 @@ class LeagueProvider extends React.Component {
     }
 }
 
-export default LeagueProvider;
+export default LeagueMainPage;

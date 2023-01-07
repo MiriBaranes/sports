@@ -1,13 +1,12 @@
-
 import React from "react";
-import LeagueProvider from "./Component/LeaguePage/LeagueProvider";
+import LeagueMainPage from "./Component/LeaguePage/LeagueMainPage";
 import {Route, Routes} from "react-router-dom";
 
 function App() {
     return <div>
         <div className="App">
             <Routes>
-                <Route path={'*'} element={<LeagueProvider/>}/>
+                <Route path={'/*'} element={<LeagueMainPage/>}/>
             </Routes>
         </div>
     </div>
